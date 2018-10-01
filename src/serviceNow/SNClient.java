@@ -80,65 +80,29 @@ public class SNClient
         }
     }
 
-//    public WriteResponse uploadFile(String nsFileName, String filePath, String fileInternalId, String nsParentFolder, String fileType) throws RemoteException {
-//        Boolean shouldUpdate = false;
-//
-//        File uploadFile = null;
-//
-//        if (fileInternalId != null) {
-//            uploadFile = downloadFile(fileInternalId);
-//            shouldUpdate = true;
-//        } else {
-//            uploadFile = new File();
-//            uploadFile.setName(nsFileName);
-//            RecordRef folderRef = new RecordRef();
-//            folderRef.setInternalId(nsParentFolder);
-//            uploadFile.setFolder(folderRef);
-//        }
-//
-//        uploadFile.setAttachFrom(FileAttachFrom._computer);
-//
-//        if (fileType != null) {
-//            if (fileType.trim().toLowerCase().equals("plaintext"))
-//                uploadFile.setFileType(MediaType._PLAINTEXT);
-//            else if (fileType.trim().toLowerCase().equals("image"))
-//                uploadFile.setFileType(MediaType._IMAGE);
-//            else if (fileType.trim().toLowerCase().equals("csv"))
-//                uploadFile.setFileType(MediaType._CSV);
-//            else
-//                uploadFile.setFileType(MediaType._PLAINTEXT);
-//        }
-//        else {
-//            uploadFile.setFileType(MediaType._PLAINTEXT);
-//        }
-//
-//        uploadFile.setContent(loadFile(filePath));
-//        uploadFile.setFileSize(null);
-//        uploadFile.setUrl(null);
-//
-//        if (shouldUpdate) {
-//            return _port.update(uploadFile);
-//        }
-//
-//        // Handle long file names so an error is not thrown whne attempting to upload files with long filenames
-//        if (nsFileName.length() > 40) {
-//
-//            WriteResponse addResp = _port.add(uploadFile);
-//
-//            if (addResp.getStatus().isIsSuccess()) {
-//                String newFileInternalId = ((RecordRef) addResp.getBaseRef()).getInternalId();
-//                uploadFile = downloadFile(newFileInternalId);
-//                uploadFile.setCaption(nsFileName.substring(0, 40));
-//                uploadFile.setFileSize(null);
-//                uploadFile.setUrl(null);
-//                return _port.update(uploadFile);
-//            }
-//
-//            return addResp;
-//        }
-//
-//        return _port.add(uploadFile);
-//    }
+    public String uploadFile(File file, Project project) throws RemoteException
+    {
+        try
+        {
+
+            String fileData = loadFile(file.getName()).toString();
+            settings = new ProjectSettingsController(project);
+            String password = settings.getProjectPassword();
+
+            SendObject sObj = new SendObject("upload", fileData);
+            String response = nsRolesRestServiceController.getNSAccounts(this.nsUserName, password, this.nsEnvironment, sObj);
+
+            JSONObject jsonObj = new JSONObject(response);
+
+            // print result
+            return jsonObj.getString("result");
+
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 
     private byte[] loadFile(String sFileName)
     {

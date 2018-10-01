@@ -196,8 +196,9 @@ public class CompareWithFileCabinetTask implements Runnable
             try
             {
                 File downloadedFile = SNClient.downloadFile(fileId, this.project);
-//
-                if (downloadedFile != null) {
+
+                if (downloadedFile != null)
+                {
                     files.add(downloadedFile);
                 }
             }
@@ -226,8 +227,10 @@ public class CompareWithFileCabinetTask implements Runnable
         return null;
     }
 
-    private void showDiffForFiles(File remoteFile, VirtualFile localFile) {
-        if (remoteFile == null || localFile == null) {
+    private void showDiffForFiles(File remoteFile, VirtualFile localFile)
+    {
+        if (remoteFile == null || localFile == null)
+        {
             return;
         }
 
@@ -236,7 +239,7 @@ public class CompareWithFileCabinetTask implements Runnable
         {
             content = new String(Files.readAllBytes(Paths.get(remoteFile.getName())));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
 
         }
@@ -248,12 +251,16 @@ public class CompareWithFileCabinetTask implements Runnable
 
         DiffRequest dr = new SimpleDiffRequest("NetSuite File Cabinet Compare", remoteFileContent, localFileContent, "NetSuite File Cabinet - " + remoteFile.getName(), "Local File - " + localFile.getName());
 
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
+        ApplicationManager.getApplication().invokeLater(new Runnable()
+        {
             @Override
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run()
+            {
+                ApplicationManager.getApplication().runWriteAction(new Runnable()
+                {
                     @Override
-                    public void run() {
+                    public void run()
+                    {
                         DiffManager.getInstance().showDiff(project, dr);
                     }
                 });

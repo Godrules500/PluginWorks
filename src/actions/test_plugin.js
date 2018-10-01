@@ -1,8 +1,9 @@
 /**
  * @SNType sys_script_include
+ * @SNApp test_plugin
+ * @SNName testing_include
  * @SNFileID d840e57e4fb86300855601bda310c72f
- * @SNScope x_osmo2_my_test_gi
- * @SNName test_inc
+ * @SNApiName x_174422_test_plug.testing_include
  */
 
 var grs = new GlideRecordSecure("sys_script_include");

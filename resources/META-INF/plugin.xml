@@ -1,10 +1,8 @@
 <idea-plugin>
-  <id>servicenow.tools.plugin</id>
-  <name>ServiceNow Tools for Intellij</name>
+  <id>com.your.company.unique.plugin.id</id>
+  <name>Plugin display name here</name>
   <version>1.0</version>
   <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
-
-  <depends>com.intellij.modules.lang</depends>
 
   <description><![CDATA[
       Enter short description for your plugin here.<br>
@@ -32,19 +30,17 @@
 
   <actions>
     <group id="com.action.serviceNowTools" text="ServiceNow Tools" description="ServiceNow Tools" popup="true">
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"  />
+      <!--<add-to-group group-id="ProjectViewPopupMenu" anchor="last"  />-->
       <action id="com.action.serviceNowTools.setupproject" class="actions.SetupProjectAction" text="Set Up Project"
               description="Set Up Project"/>
       <action id="com.action.serviceNowTools.showprojectsettings" class="actions.ChangeProjectSettingsAction"
               text="Show Project Settings" description="Show Project Settings"/>
       <action id="com.action.serviceNowTools.changeprojectsettings" class="actions.ChangeProjectSettingsAction"
               text="Change Project Settings" description="Change Project Settings"/>
-      <action id="com.action.serviceNowTools.upload" class="actions.CompareWithFileCabinetAction"
+      <action id="com.action.serviceNowTools.upload" class="actions.UploadAction"
               text="Upload Selected File(s)" description="Upload Selected File(s) to NetSuite File Cabinet"/>
       <action id="com.action.serviceNowTools.comparewithfilecabinet" class="actions.CompareWithFileCabinetAction"
               text="Compare With File Cabinet" description="Compare Selected File(s) with File Cabinet"/>
-      <!--<action id="com.serviceNowTools.recordsbrowser" class="actions.RecordsBrowserAction"-->
-              <!--text="2018.1 Records Browser" description="2018.1 Records Browser"/>-->
     </group>
   </actions>
 

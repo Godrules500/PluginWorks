@@ -20,6 +20,7 @@ import projectsettings.ProjectSettingsController;
 import serviceNow.SNClient;
 
 import javax.swing.*;
+import java.io.File;
 
 public class UploadTask implements Runnable
 {
@@ -89,6 +90,7 @@ public class UploadTask implements Runnable
                     progessIndicator.setText("Uploading File: " + file.getName());
                     try
                     {
+//                        File downloadedFile = SNClient.uploadFile(file, this.project);
 //                        WriteResponse response = SNClient.uploadFile(file.getName(), file.getPath(), SNClient.searchFile(file.getName(), fileNetSuiteParentFolderId, projectSettingsController.getNsRootFolder()), fileNetSuiteParentFolderId, "");
 //                        if (!response.getStatus().isIsSuccess())
 //                        {

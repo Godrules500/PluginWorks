@@ -6,13 +6,17 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import projectsettings.ProjectSettingsController;
 import serviceNow.NSRolesRestServiceController;
+import serviceNow.SendObject;
 
 import javax.swing.*;
 import java.awt.event.*;
 
-public class CredentialsUI extends JDialog {
+public class CredentialsUI extends JDialog
+{
     private JPanel contentPane;
     private JButton nextButton;
     private JButton cancelButton;
@@ -25,52 +29,64 @@ public class CredentialsUI extends JDialog {
     private Project project;
     private serviceNow.SNClient SNClient;
 
-    public CredentialsUI(Project project) {
+    public CredentialsUI(Project project)
+    {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(nextButton);
 
-        this.SNClient      = SNClient;
-        this.project       = project;
+        this.SNClient = SNClient;
+        this.project = project;
 //        this.url = txtUrl.getText();
 
         ProjectSettingsController projectSettingsController = new ProjectSettingsController(this.project);
 
-        if (projectSettingsController.hasAllProjectSettings()) {
+        if (projectSettingsController.hasAllProjectSettings())
+        {
             String nsPassword = projectSettingsController.getProjectPassword();
-            if (nsPassword != null && !nsPassword.isEmpty()) {
+            if (nsPassword != null && !nsPassword.isEmpty())
+            {
                 emailField.setText(projectSettingsController.getNsEmail());
                 passwordField.setText(nsPassword);
             }
         }
 
-        nextButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        nextButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
                 onNext();
             }
         });
 
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        cancelButton.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
                 onCancel();
             }
         });
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
+        addWindowListener(new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
                 onCancel();
             }
         });
 
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        contentPane.registerKeyboardAction(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    private void saveProjectSettings() {
+    private void saveProjectSettings()
+    {
         String email = emailField.getText();
         String url = txtUrl.getText();
         String password = String.valueOf(passwordField.getPassword());
@@ -81,9 +97,11 @@ public class CredentialsUI extends JDialog {
         nsProjectSettingsController.saveProjectPassword(email, password, url);
     }
 
-    private void onNext() {
-        if (emailField.getText().isEmpty() || String.valueOf(passwordField.getPassword()).isEmpty() || txtUrl.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Email, Password and Environment are required",  "ERROR", JOptionPane.ERROR_MESSAGE);
+    private void onNext()
+    {
+        if (emailField.getText().isEmpty() || String.valueOf(passwordField.getPassword()).isEmpty() || txtUrl.getText().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "Email, Password and Environment are required", "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -91,12 +109,29 @@ public class CredentialsUI extends JDialog {
 
 
         NSRolesRestServiceController nsRolesRestServiceController = new NSRolesRestServiceController();
-        String nsAccounts = nsRolesRestServiceController.getNSAccounts(emailField.getText(), String.valueOf(passwordField.getPassword()), txtUrl.getText());
 
-        if (nsAccounts == null) {
-            JOptionPane.showMessageDialog(null, "Error getting NetSuite Accounts from Roles Rest Service.\nPlease verify that your e-mail and password are correct.",  "ERROR", JOptionPane.ERROR_MESSAGE);
+        SendObject sObj = new SendObject("authenticate", "");
+        String nsAccounts = nsRolesRestServiceController.getNSAccounts(emailField.getText(), String.valueOf(passwordField.getPassword()), txtUrl.getText(), sObj);
+
+        JSONObject jsonObj = null;
+        try
+        {
+            jsonObj = new JSONObject(nsAccounts);
+            nsAccounts = jsonObj.getString("result");
         }
-        else {
+        catch (JSONException e)
+        {
+            nsAccounts = "false";
+            e.printStackTrace();
+        }
+
+
+        if (nsAccounts == null || nsAccounts != "true")
+        {
+            JOptionPane.showMessageDialog(null, "Error getting NetSuite Accounts from Roles Rest Service.\nPlease verify that your e-mail and password are correct.", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+        else
+        {
             saveProjectSettings();
             JBPopupFactory.getInstance()
                     .createHtmlTextBalloonBuilder("<h3>NetSuite Project Settings Updated!</h3>", MessageType.INFO, null)
@@ -105,8 +140,6 @@ public class CredentialsUI extends JDialog {
                     .show(RelativePoint.getNorthEastOf(WindowManager.getInstance().getIdeFrame(project).getComponent()),
                             Balloon.Position.above);
         }
-
-
 
 
         //AccountsUI accountsUI = new AccountsUI(emailField.getText(), String.valueOf(passwordField.getPassword()), txtUrl.getText(), this.project);
@@ -118,7 +151,8 @@ public class CredentialsUI extends JDialog {
         dispose();
     }
 
-    private void onCancel() {
+    private void onCancel()
+    {
         dispose();
     }
 }
